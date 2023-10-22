@@ -1,6 +1,8 @@
 import imaplib
 import email
 from email.header import decode_header
+from threading import Timer
+import time 
 
 # Gmail account credentials
 username = "tnmhoang.lop93@gmail.com"
@@ -35,21 +37,20 @@ if isinstance(from_, bytes):
     from_ = from_.decode(encoding)
 
 # Print email details
-print("Subject:", subject)
-print("From:", from_)
+if (from_ == "Tuấn Đạt"):
+    print("Subject:", subject)
+    print("From:", from_)
 
-# If the email message is multipart
-if email_message.is_multipart():
-    for part in email_message.walk():
-        content_type = part.get_content_type()
-        content_disposition = str(part.get("Content-Disposition"))
-        try:
-            body = part.get_payload(decode=True).decode()
-        except:
-            pass
-        if content_type == "text/plain" and "attachment" not in content_disposition:
-            print(body)
-        
-
+    # If the email message is multipart
+    if email_message.is_multipart():
+        for part in email_message.walk():
+            content_type = part.get_content_type()
+            content_disposition = str(part.get("Content-Disposition"))
+            try:
+                body = part.get_payload(decode=True).decode()
+            except:
+                pass
+            if content_type == "text/plain" and "attachment" not in content_disposition:
+                print(body)
 # Close the connection
 imap.logout()
