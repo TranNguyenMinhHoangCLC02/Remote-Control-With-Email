@@ -49,6 +49,7 @@ if email_message.is_multipart():
             pass
         if content_type == "text/plain" and "attachment" not in content_disposition:
             print(body)
+        
 
 # Close the connection
 imap.logout()
