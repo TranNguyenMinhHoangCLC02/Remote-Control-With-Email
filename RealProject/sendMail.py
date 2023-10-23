@@ -36,7 +36,7 @@ def send_email(subject, body, recipient_email, attachment_path=None):
     smtp_server.quit()
 
 def send_screenshot_email(recipient_email):
-    screenshot_path = '../Images/screenshot.png'
+    screenshot_path = 'Assets/screenshot.png'
     screenshot = ImageGrab.grab()
     screenshot.save(screenshot_path)
 
