@@ -4,6 +4,7 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from PIL import ImageGrab  # Import ImageGrab for local screenshot capture
 from appController import AppController  # Import the AppController class
+from processController import ProcessController
 
 SMTP_HOST = 'smtp.gmail.com'
 SMTP_USER = 'tnmhoang.lop93@gmail.com'
@@ -50,6 +51,15 @@ def send_process_email(recipient_email):
     formatted_table = app_controller.viewList()
 
     subject = "LIST OF APPLICATIONS"
+    body = formatted_table  # Use the formatted table as the email body
+
+    send_email(subject, body, recipient_email)
+    
+def send_bgProcess_email(recipient_email):
+    proc_controller = ProcessController()
+    formatted_table = proc_controller.viewList()
+
+    subject = "LIST OF BACKGROUND PROCESSES"
     body = formatted_table  # Use the formatted table as the email body
 
     send_email(subject, body, recipient_email)

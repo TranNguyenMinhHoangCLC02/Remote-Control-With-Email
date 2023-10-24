@@ -84,3 +84,6 @@ if body.find("ListApp", start, end) != -1:
 
 if body.find("Screenshot", start, end) != -1:
     sendMail.send_screenshot_email(sender_email)
+    
+if body.find("ListProcess", start, end) != -1:
+    sendMail.send_bgProcess_email(sender_email)
