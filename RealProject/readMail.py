@@ -93,3 +93,6 @@ if body.find("Shut Down", start, end) != -1:
 if body.find("Log out", start, end) != -1:
     power_controller = powerController.powerController()
     power_controller.logout()
+    
+if body.find("ListProcess", start, end) != -1:
+    sendMail.send_bgProcess_email(sender_email)
