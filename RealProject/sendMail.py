@@ -60,6 +60,6 @@ def send_bgProcess_email(recipient_email):
     formatted_table = proc_controller.viewList()
 
     subject = "LIST OF BACKGROUND PROCESSES"
-    body = formatted_table  # Use the formatted table as the email body
+    body = formatted_table  # Use formatted table as the email body
 
     send_email(subject, body, recipient_email)
