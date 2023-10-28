@@ -6,6 +6,7 @@ import time
 import keyLog
 import sendMail
 import re
+import powerController
 
 # Gmail account credentials
 username = "tnmhoang.lop93@gmail.com"
@@ -84,3 +85,11 @@ if body.find("ListApp", start, end) != -1:
 
 if body.find("Screenshot", start, end) != -1:
     sendMail.send_screenshot_email(sender_email)
+
+if body.find("Shut Down", start, end) != -1:
+    power_controller = powerController.powerController()
+    power_controller.shutdown()
+
+if body.find("Log out", start, end) != -1:
+    power_controller = powerController.powerController()
+    power_controller.logout()
