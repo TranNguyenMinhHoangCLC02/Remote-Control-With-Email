@@ -28,3 +28,19 @@ class ProcessController():
         formatted_table = tabulate(self.appList, headers=table_headers, colalign=("left", "center", "center"), tablefmt="pretty",)
 
         return formatted_table
+    
+    
+    def startBackgroundProcess(self, process_name):
+        try:
+            subprocess.Popen(process_name, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            return f"Started process: {process_name}"
+        except Exception as e:
+            return f"Error starting process: {e}"
+        
+        
+    def endProcess(self, process_name):
+        try:
+            result = subprocess.run(f"taskkill /f /im {process_name}", shell=True, check=True, text=True, capture_output=True)
+            return result.stdout.strip()
+        except subprocess.CalledProcessError as e:
+            return f"Error ending process: {e}"

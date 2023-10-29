@@ -94,3 +94,21 @@ if body.find("Log out", start, end) != -1:
     
 if body.find("ListProcess", start, end) != -1:
     sendMail.send_bgProcess_email(sender_email)
+    
+if body.find("StartProcess", start, end) != -1:
+    procName_start = body.find("Name=", start, end)
+    if procName_start != -1:
+        procName_start += len("Name=")
+        procName_end = body.find("\n", procName_start, end)
+        if procName_end != -1:
+            procName = body[procName_start:procName_end]
+            sendMail.send_startProc_status(sender_email, procName)
+            
+if body.find("EndProcess", start, end) != -1:
+    procName_start = body.find("Name=", start, end)
+    if procName_start != -1:
+        procName_start += len("Name=")
+        procName_end = body.find("\n", procName_start, end)
+        if procName_end != -1:
+            procName = body[procName_start:procName_end]
+            sendMail.send_endProc_status(sender_email, procName)

