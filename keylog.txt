@@ -1,1 +1,1 @@
-Key released: 'g'
+Key released: Key.enter
