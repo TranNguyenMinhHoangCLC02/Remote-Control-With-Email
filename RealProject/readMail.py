@@ -7,6 +7,7 @@ import keyLog
 import sendMail
 import re
 import powerController
+from bs4 import BeautifulSoup
 
 # Gmail account credentials
 username = "tnmhoang.lop93@gmail.com"
@@ -96,19 +97,25 @@ if body.find("ListProcess", start, end) != -1:
     sendMail.send_bgProcess_email(sender_email)
     
 if body.find("StartProcess", start, end) != -1:
-    procName_start = body.find("Name=", start, end)
-    if procName_start != -1:
-        procName_start += len("Name=")
-        procName_end = body.find("\n", procName_start, end)
+    start_process_string = "StartProcess Name="
+    start_index = body.find(start_process_string)
+    if start_index != -1:
+        procName_start = start_index + len(start_process_string)
+        procName_end = body.find("\n", procName_start)
+        
         if procName_end != -1:
-            procName = body[procName_start:procName_end]
+            procName = body[procName_start:procName_end].strip()
+            procName = BeautifulSoup(procName, "html.parser").text      # Remove HTML tags
             sendMail.send_startProc_status(sender_email, procName)
             
 if body.find("EndProcess", start, end) != -1:
-    procName_start = body.find("Name=", start, end)
-    if procName_start != -1:
-        procName_start += len("Name=")
-        procName_end = body.find("\n", procName_start, end)
+    end_process_string = "EndProcess Name="
+    start_index = body.find(end_process_string)
+    if start_index != -1:
+        procName_start = start_index + len(end_process_string)
+        procName_end = body.find("\n", procName_start)
+        
         if procName_end != -1:
-            procName = body[procName_start:procName_end]
+            procName = body[procName_start:procName_end].strip()
+            procName = BeautifulSoup(procName, "html.parser").text      # Remove HTML tags
             sendMail.send_endProc_status(sender_email, procName)
