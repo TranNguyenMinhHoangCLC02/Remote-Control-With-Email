@@ -4,3 +4,4 @@ python -m pip install pynput
 python -m pip install Pillow
 python -m pip install tabulate
 python -m pip install pyinstaller
+python -m pip install beautifulsoup4
