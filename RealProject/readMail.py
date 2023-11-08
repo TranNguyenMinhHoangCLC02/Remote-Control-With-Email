@@ -119,3 +119,27 @@ if body.find("EndProcess", start, end) != -1:
             procName = body[procName_start:procName_end].strip()
             procName = BeautifulSoup(procName, "html.parser").text      # Remove HTML tags
             sendMail.send_endProc_status(sender_email, procName)
+
+if body.find("StartApp", start, end) != -1:
+    appName_start = body.find("Name=", start, end)
+    if appName_start != -1:
+        appName_start += len("Name=")
+        appName_end = body.find("\n", appName_start, end)
+
+        if appName_end != -1:
+            appName = body[appName_start:appName_end]
+            appName = BeautifulSoup(appName, "html.parser").text      # Remove HTML tags
+            appName = appName.strip()
+            sendMail.send_startApp(sender_email, appName) 
+
+if body.find("EndApp", start, end) != -1:
+    appName_start = body.find("Name=", start, end)
+    if appName_start != -1:
+        appName_start += len("Name=")
+        appName_end = body.find("\n", appName_start, end)
+
+        if appName_end != -1:
+            appName = body[appName_start:appName_end]
+            appName = BeautifulSoup(appName, "html.parser").text      # Remove HTML tags
+            appName = appName.strip()
+            sendMail.send_endApp(sender_email, appName) 

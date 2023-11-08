@@ -87,3 +87,17 @@ def send_endProc_status(recipient_email, process_name):
     subject = "PROCESS STATUS REPORT"
     body = proc_controlller.endProcess(process_name)
     send_email(subject, body, recipient_email)
+
+def send_startApp(recipient_email, appName):
+    app_controlller = AppController()
+    
+    subject = "APPLICATION STATUS REPORT"
+    body = app_controlller.startApp(appName)
+    send_email(subject, body, recipient_email)
+
+def send_endApp(recipient_email, app_name):
+    app_controller = AppController()
+
+    subject = "APPLICATION STATUS REPORT"
+    body = app_controller.endApp(app_name)
+    send_email(subject, body, recipient_email)
