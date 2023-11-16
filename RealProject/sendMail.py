@@ -9,7 +9,7 @@ from keyLog import keyLog
 
 SMTP_HOST = 'smtp.gmail.com'
 SMTP_USER = '2d2h.computernetwork.clc.fitus@gmail.com'
-SMTP_PASS = 'ijjm pypm pmly hmqm'
+SMTP_PASS = 'jvys wjpg mmmx belp'
 FROM_EMAIL = '2d2h.computernetwork.clc.fitus@gmail.com'  # Update the from email address
 
 def send_email(subject, body, recipient_email, attachment_path=None):
