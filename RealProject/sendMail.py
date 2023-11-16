@@ -8,9 +8,9 @@ from processController import ProcessController
 from keyLog import keyLog
 
 SMTP_HOST = 'smtp.gmail.com'
-SMTP_USER = 'tnmhoang.lop93@gmail.com'
+SMTP_USER = '2d2h.computernetwork.clc.fitus@gmail.com'
 SMTP_PASS = 'ijjm pypm pmly hmqm'
-FROM_EMAIL = 'tnmhoang.lop93@gmail.com'  # Update the from email address
+FROM_EMAIL = '2d2h.computernetwork.clc.fitus@gmail.com'  # Update the from email address
 
 def send_email(subject, body, recipient_email, attachment_path=None):
     msg = MIMEMultipart()

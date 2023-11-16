@@ -10,8 +10,8 @@ import powerController
 from bs4 import BeautifulSoup
 
 # Gmail account credentials
-username = "tnmhoang.lop93@gmail.com"
-password = "ijjm pypm pmly hmqm"
+username = "2d2h.computernetwork.clc.fitus@gmail.com"
+password = "jvys wjpg mmmx belp"
 
 # Create an IMAP4 class with SSL
 imap = imaplib.IMAP4_SSL("imap.gmail.com")
