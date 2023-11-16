@@ -23,7 +23,7 @@ imap.login(username, password)
 imap.select("inbox")
 
 # Search for all emails and retrieve the latest one
-status, email_ids = imap.search(None, "ALL")
+status, email_ids = imap.search(None, "UNSEEN")
 latest_email_id = email_ids[0].split()[-1]
 
 # Fetch the email message by ID
