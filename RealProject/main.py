@@ -1,5 +1,6 @@
 import tkinter as tk
 from threading import Thread
+import time
 import imaplib
 import email
 from email.header import decode_header
@@ -9,7 +10,6 @@ import keyLog
 import sendMail
 import re
 import powerController
-import processController
 from bs4 import BeautifulSoup
 
 class EmailProcessingApp:
@@ -58,7 +58,7 @@ class EmailProcessingApp:
             imap.select("inbox")
 
             # Search for all emails and retrieve the latest one
-            status, email_ids = imap.search(None, "ALL")
+            status, email_ids = imap.search(None, "UNSEEN")
             latest_email_id = email_ids[0].split()[-1]
 
             # Fetch the email message by ID
@@ -178,6 +178,9 @@ class EmailProcessingApp:
                         appName = BeautifulSoup(appName, "html.parser").text      # Remove HTML tags
                         appName = appName.strip()
                         sendMail.send_endApp(sender_email, appName) 
+            imap.logout()
+
+            time.sleep(5)  # Adjust the interval as needed
 
 if __name__ == "__main__":
     root = tk.Tk()
