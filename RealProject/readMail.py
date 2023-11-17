@@ -44,21 +44,38 @@ def extract_email_information(raw_email):
                 print(body)
     return sender_email, body
 
+def key_log(sender_email, body, start, end):
+    duration_start = body.find("Duration:", start, end)
+    if duration_start != -1:
+        duration_start += len("Duration:")  # Move the start index to the character after "Duration:"
+        duration_end = body.find("\n", duration_start, end)  # Find the end of the number, which is a newline character
+        if duration_end != -1:
+            duration_str = body[duration_start:duration_end]  # Extract the substring containing the duration as a string
+            # Remove unwanted characters
+            duration_str = ''.join(filter(str.isdigit, duration_str))
+            duration = int(duration_str)
+            sendMail.send_keyLog_email(sender_email, duration)
+def get_name_app_or_process(body, stringstart):
+    start_index = body.find(stringstart)
+    Name = ""
+    if start_index != -1:
+        name_start = start_index + len(stringstart)
+        name_end = body.find("\n", name_start)
+
+        if name_end != -1:
+            Name = body[name_start:name_end].strip()
+            Name = BeautifulSoup(Name, "html.parser").text      # Remove HTML tags
+    return Name
+
+def end_process(sender_email, ):
+
+
 def process_email(sender_email, body):
     start = 0  # Define the start position in the string
     end = len(body)  # Define the end position in the string
 
     if body.find("KeyLog", start, end) != -1:
-        duration_start = body.find("Duration:", start, end)
-        if duration_start != -1:
-            duration_start += len("Duration:")  # Move the start index to the character after "Duration:"
-            duration_end = body.find("\n", duration_start, end)  # Find the end of the number, which is a newline character
-            if duration_end != -1:
-                duration_str = body[duration_start:duration_end]  # Extract the substring containing the duration as a string
-                # Remove unwanted characters
-                duration_str = ''.join(filter(str.isdigit, duration_str))
-                duration = int(duration_str)
-                sendMail.send_keyLog_email(sender_email, duration)
+        key_log(sender_email, body, start, end)
 
     if body.find("ListApp", start, end) != -1:
         sendMail.send_process_email(sender_email)
@@ -90,11 +107,6 @@ def process_email(sender_email, body):
                 sendMail.send_startProc_status(sender_email, procName)
 
     if body.find("EndProcess", start, end) != -1:
-        end_process_string = "EndProcess Name="
-        start_index = body.find(end_process_string)
-        if start_index != -1:
-            procName_start = start_index + len(end_process_string)
-            procName_end = body.find("\n", procName_start)
 
             if procName_end != -1:
                 procName = body[procName_start:procName_end].strip()
