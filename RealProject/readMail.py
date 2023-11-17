@@ -27,7 +27,6 @@ def extract_email_information(raw_email):
         sender_email = match.group(1)
 
     # Print email details
-    #if (from_ == "Tuấn Đạt"):
     print("Subject:", subject)
     print("From:", from_)
 
