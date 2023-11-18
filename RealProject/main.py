@@ -41,16 +41,18 @@ class EmailProcessingApp:
             thread.start()
 
     def process_emails_thread(self):
+        # Call the read_email() function here
+        command = readMail.read_email()
+
         # Run the email processing logic
         for i in range(1, 101):
-            self.update_progress(i, "Executing Command")
+            self.update_progress(i, "Executing " + command)
             time.sleep(0.1) # Simulate work
-
-        # Call the read_email() function here
-        readMail.read_email()
 
         self.update_progress(0, "Command Complete")
         self.stop_processing()
+        if (command == "Die"):
+            self.stop_processing()
 
     def stop_processing(self):
         self.is_running = False
