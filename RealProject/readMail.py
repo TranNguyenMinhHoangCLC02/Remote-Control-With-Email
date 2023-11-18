@@ -122,7 +122,7 @@ def process_email(sender_email, body):
         start_app(sender_email, body)
 
     if body.find("EndApp", start, end) != -1:
-        end_app()(sender_email, body)
+        end_app(sender_email, body)
 
 def read_email():
     # Gmail account credentials
