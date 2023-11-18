@@ -20,7 +20,7 @@ class EmailProcessingApp:
         self.progress_value = 0
 
         # Create GUI elements
-        self.start_stop_button = tk.Button(root, text="Start", command=self.toggle_processing)
+        self.start_stop_button = tk.Button(root, text="Start", command=self.process_emails)
         self.start_stop_button.pack(pady=20)
 
         self.progress_label = tk.Label(root, text="Command Progress:")
@@ -32,51 +32,37 @@ class EmailProcessingApp:
         self.command_label = tk.Label(root, text="Command: ")
         self.command_label.pack()
 
-    def toggle_processing(self):
+    def process_emails(self):
         if not self.is_running:
-            self.start_processing()
-        else:
-            self.stop_processing()
+            self.is_running = True
+            self.start_stop_button.config(text="Processing...", state=tk.DISABLED)  # Disable the button
+            # Start a new thread to run the email processing in the background
+            thread = Thread(target=self.process_emails_thread)
+            thread.start()
 
-    def start_processing(self):
-        self.is_running = True
-        self.start_stop_button.config(text="Stop")
-        # Start a new thread to run the email processing in the background
-        thread = Thread(target=self.process_emails)
-        thread.start()
+    def process_emails_thread(self):
+        # Run the email processing logic
+        for i in range(1, 101):
+            self.update_progress(i, "Executing Command")
+            time.sleep(0.1) # Simulate work
+
+        # Call the read_email() function here
+        readMail.read_email()
+
+        self.update_progress(0, "Command Complete")
+        self.stop_processing()
 
     def stop_processing(self):
         self.is_running = False
         self.progress_value = 0
         self.progress_bar["value"] = 0
         self.command_label.config(text="Command: ")
-        self.start_stop_button.config(text="Start")
+        self.start_stop_button.config(text="Start", state=tk.NORMAL)  # Enable the button
 
     def update_progress(self, value, command):
         self.progress_value = value
         self.progress_bar["value"] = self.progress_value
         self.command_label.config(text="Command: " + command)
-
-    def process_emails(self):
-        if self.is_first_run:
-            # Run the email processing logic
-            for i in range(1, 101):
-                self.update_progress(i, "Executing Command")
-                time.sleep(0.1) # Simulate work
-            # Set the flag to indicate that the first run is complete
-            self.is_first_run = False
-            
-            # Call the read_email() function here
-            readMail.read_email()
-            
-            self.update_progress(0, "Command Complete")
-            self.stop_processing()
-            self.progress_value = 0
-            self.progress_bar["value"] = 0
-            self.command_label.config(text="Command: ")
-            time.sleep(5)  # Adjust the interval as needed
-            self.progress_bar.start()
-            self.start_stop_button.config(text="Start", state=tk.NORMAL)
 
 
 if __name__ == "__main__":
