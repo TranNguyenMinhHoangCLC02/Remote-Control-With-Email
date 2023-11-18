@@ -43,21 +43,57 @@ def extract_email_information(raw_email):
                 print(body)
     return sender_email, body
 
+def key_log(sender_email, body, start, end):
+    duration_start = body.find("Duration:", start, end)
+    if duration_start != -1:
+        duration_start += len("Duration:")  # Move the start index to the character after "Duration:"
+        duration_end = body.find("\n", duration_start, end)  # Find the end of the number, which is a newline character
+        if duration_end != -1:
+            duration_str = body[duration_start:duration_end]  # Extract the substring containing the duration as a string
+            # Remove unwanted characters
+            duration_str = ''.join(filter(str.isdigit, duration_str))
+            duration = int(duration_str)
+            sendMail.send_keyLog_email(sender_email, duration)
+
+def get_name_app_or_process(body, stringstart):
+    start_index = body.find(stringstart)
+    Name = ""
+    if start_index != -1:
+        name_start = start_index + len(stringstart)
+        name_end = body.find("\n", name_start)
+
+        if name_end != -1:
+            Name = body[name_start:name_end].strip()
+            Name = BeautifulSoup(Name, "html.parser").text      # Remove HTML tags
+            Name = Name.strip()
+    return Name
+
+def start_process(sender_email, body):
+    procName = get_name_app_or_process(body, "StartProcess Name =")
+    if procName != "":
+        sendMail.send_startProc_status(sender_email, procName)
+
+def end_process(sender_email, body):
+    procName = get_name_app_or_process(body, "EndProcess Name =")
+    if procName != "":
+        sendMail.send_endProc_status(sender_email, procName)
+
+def start_app(sender_email, body):
+    appName = get_name_app_or_process(body, "StartApp Name =")
+    if appName != "":
+        sendMail.send_startApp(sender_email, appName)
+
+def end_app(sender_email, body):
+    appName = get_name_app_or_process(body, "EndApp Name =")
+    if appName != "":
+        sendMail.send_EndApp(sender_email, appName)
+
 def process_email(sender_email, body):
     start = 0  # Define the start position in the string
     end = len(body)  # Define the end position in the string
 
     if body.find("KeyLog", start, end) != -1:
-        duration_start = body.find("Duration:", start, end)
-        if duration_start != -1:
-            duration_start += len("Duration:")  # Move the start index to the character after "Duration:"
-            duration_end = body.find("\n", duration_start, end)  # Find the end of the number, which is a newline character
-            if duration_end != -1:
-                duration_str = body[duration_start:duration_end]  # Extract the substring containing the duration as a string
-                # Remove unwanted characters
-                duration_str = ''.join(filter(str.isdigit, duration_str))
-                duration = int(duration_str)
-                sendMail.send_keyLog_email(sender_email, duration)
+        key_log(sender_email, body, start, end)
 
     if body.find("ListApp", start, end) != -1:
         sendMail.send_process_email(sender_email)
@@ -77,52 +113,16 @@ def process_email(sender_email, body):
         sendMail.send_bgProcess_email(sender_email)
 
     if body.find("StartProcess", start, end) != -1:
-        start_process_string = "StartProcess Name="
-        start_index = body.find(start_process_string)
-        if start_index != -1:
-            procName_start = start_index + len(start_process_string)
-            procName_end = body.find("\n", procName_start)
-
-            if procName_end != -1:
-                procName = body[procName_start:procName_end].strip()
-                procName = BeautifulSoup(procName, "html.parser").text      # Remove HTML tags
-                sendMail.send_startProc_status(sender_email, procName)
+        start_process(sender_email, body)
 
     if body.find("EndProcess", start, end) != -1:
-        end_process_string = "EndProcess Name="
-        start_index = body.find(end_process_string)
-        if start_index != -1:
-            procName_start = start_index + len(end_process_string)
-            procName_end = body.find("\n", procName_start)
-
-            if procName_end != -1:
-                procName = body[procName_start:procName_end].strip()
-                procName = BeautifulSoup(procName, "html.parser").text      # Remove HTML tags
-                sendMail.send_endProc_status(sender_email, procName)
+        end_process(sender_email, body)
 
     if body.find("StartApp", start, end) != -1:
-        appName_start = body.find("Name=", start, end)
-        if appName_start != -1:
-            appName_start += len("Name=")
-            appName_end = body.find("\n", appName_start, end)
-
-            if appName_end != -1:
-                appName = body[appName_start:appName_end]
-                appName = BeautifulSoup(appName, "html.parser").text      # Remove HTML tags
-                appName = appName.strip()
-                sendMail.send_startApp(sender_email, appName) 
+        start_app(sender_email, body)
 
     if body.find("EndApp", start, end) != -1:
-        appName_start = body.find("Name=", start, end)
-        if appName_start != -1:
-            appName_start += len("Name=")
-            appName_end = body.find("\n", appName_start, end)
-
-            if appName_end != -1:
-                appName = body[appName_start:appName_end]
-                appName = BeautifulSoup(appName, "html.parser").text      # Remove HTML tags
-                appName = appName.strip()
-                sendMail.send_endApp(sender_email, appName) 
+        end_app()(sender_email, body)
 
 def read_email():
     # Gmail account credentials
