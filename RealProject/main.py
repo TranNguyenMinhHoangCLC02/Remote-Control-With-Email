@@ -10,6 +10,43 @@ from bs4 import BeautifulSoup
 import sendMail
 import powerController
 import readMail
+import random
+
+class TimerApp:
+    def __init__(self, root, email_app):
+        self.root = root
+        self.email_app = email_app
+        self.root.title("Timer App")
+        self.timer_value = tk.StringVar()
+        self.timer_value.set("00:00:00")
+
+        self.timer_label = tk.Label(root, text="Set Timer:")
+        self.timer_label.pack()
+
+        self.timer_entry = tk.Entry(root, textvariable=self.timer_value)
+        self.timer_entry.pack()
+
+    def start_timer(self):
+        timer_value = self.timer_value.get()
+        hours, minutes, seconds = map(int, timer_value.split(':'))
+        total_seconds = hours * 3600 + minutes * 60 + seconds
+
+        self.timer_entry.config(state=tk.DISABLED)
+        self.email_app.process_emails()
+        self.update_timer(total_seconds)
+
+    def update_timer(self, remaining_seconds):
+        if remaining_seconds >= 0:
+            hours = remaining_seconds // 3600
+            minutes = (remaining_seconds % 3600) // 60
+            seconds = remaining_seconds % 60
+            timer_value = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+            self.timer_value.set(timer_value)
+
+            self.root.after(1000, self.update_timer, remaining_seconds - 1)
+        else:
+            self.timer_entry.config(state=tk.NORMAL)
+
 
 class EmailProcessingApp:
     def __init__(self, root):
@@ -20,7 +57,7 @@ class EmailProcessingApp:
         self.progress_value = 0
 
         # Create GUI elements
-        self.start_stop_button = tk.Button(root, text="Start", command=self.process_emails)
+        self.start_stop_button = tk.Button(root, text="Start", command=self.start_timer)
         self.start_stop_button.pack(pady=20)
 
         self.progress_label = tk.Label(root, text="Command Progress:")
@@ -32,6 +69,12 @@ class EmailProcessingApp:
         self.command_label = tk.Label(root, text="Command: ")
         self.command_label.pack()
 
+        # Create TimerApp instance
+        self.timer_app = TimerApp(root, self)
+
+    def start_timer(self):
+        self.timer_app.start_timer()
+
     def process_emails(self):
         if not self.is_running:
             self.is_running = True
@@ -40,19 +83,22 @@ class EmailProcessingApp:
             thread = Thread(target=self.process_emails_thread)
             thread.start()
 
+
     def process_emails_thread(self):
-        # Call the read_email() function here
-        command = readMail.read_email()
+        # Start the timer
+        self.start_timer()
+        while self.timer_app.timer_value.get() != "00:00:00":
+            # Call the read_email() function here
+            command = readMail.read_email()
+            # Run the email processing logic
+            for i in range(1, 101):
+                self.update_progress(i, "Executing " + command)
+                time.sleep(random.uniform(0.01, 0.1))  # Random sleep time between 0.01 and 0.1 seconds
 
-        # Run the email processing logic
-        for i in range(1, 101):
-            self.update_progress(i, "Executing " + command)
-            time.sleep(0.1) # Simulate work
-
-        self.update_progress(0, "Command Complete")
+            self.update_progress(0, "Command Complete")
+            if command == "Die":
+                self.stop_processing()
         self.stop_processing()
-        if (command == "Die"):
-            self.stop_processing()
 
     def stop_processing(self):
         self.is_running = False
