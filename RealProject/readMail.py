@@ -134,6 +134,9 @@ def process_email(sender_email, body):
 
     if body.find("Die", start, end) != -1:
         return "Die"
+    
+    else: 
+        return "Invalid"
 
 def read_email():
     # Gmail account credentials

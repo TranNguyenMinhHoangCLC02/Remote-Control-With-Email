@@ -6,4 +6,4 @@ class powerController():
         os.system("shutdown /s /t 60")
     
     def logout(self):
-        windll.user32.ExitWindowsEx(0, 1);
+        windll.user32.ExitWindowsEx(0, 1)

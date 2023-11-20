@@ -90,6 +90,9 @@ class EmailProcessingApp:
         while self.timer_app.timer_value.get() != "00:00:00":
             # Call the read_email() function here
             command = readMail.read_email()
+            if command == "Invalid":
+                self.update_progress(0, "Invalid")
+                continue
             # Run the email processing logic
             for i in range(1, 101):
                 self.update_progress(i, "Executing " + command)
