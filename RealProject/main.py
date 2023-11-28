@@ -101,6 +101,7 @@ class EmailProcessingApp:
             self.update_progress(0, "Command Complete")
             if command == "Die":
                 self.stop_processing()
+
         self.stop_processing()
 
     def stop_processing(self):
@@ -109,6 +110,7 @@ class EmailProcessingApp:
         self.progress_bar["value"] = 0
         self.command_label.config(text="Command: ")
         self.start_stop_button.config(text="Start", state=tk.NORMAL)  # Enable the button
+        self.timer_app.timer_value.set("00:00:00")
 
     def update_progress(self, value, command):
         self.progress_value = value
