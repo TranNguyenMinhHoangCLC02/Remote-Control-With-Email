@@ -7,3 +7,5 @@ python -m pip install pyinstaller
 python -m pip install beautifulsoup4
 python -m pip install psutil
 python -m pip install tk
+# How to compile file
+pyinstaller --noconsole main.py
