@@ -40,7 +40,14 @@ class ProcessController():
         
     def endProcess(self, process_name):
         try:
-            result = subprocess.run(f"taskkill /f /im {process_name}", shell=True, check=True, text=True, capture_output=True)
-            return result.stdout.strip()
-        except subprocess.CalledProcessError as e:
+            #result = subprocess.run(f"taskkill /f /im {process_name}", shell=True, check=True, text=True, capture_output=True)
+            #return result.stdout.strip()
+        #except subprocess.CalledProcessError as e:
+            #return f"Error ending process: {e}"
+            
+            # Search and kill the process with name process_name
+            process = subprocess.Popen(f"taskkill /f /im {process_name}", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            # return result
+            return f"Ended process: {process_name}"
+        except Exception as e:
             return f"Error ending process: {e}"
