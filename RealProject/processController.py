@@ -46,7 +46,7 @@ class ProcessController():
             #return f"Error ending process: {e}"
             
             # Search and kill the process with name process_name
-            process = subprocess.Popen(f"taskkill /f /im {process_name}", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            process = subprocess.Popen(f"taskkill /f /im {process_name}", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, executable="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe")
             # return result
             return f"Ended process: {process_name}"
         except Exception as e:
