@@ -1,5 +1,6 @@
 import subprocess
 from tabulate import tabulate
+import psutil
 
 class ProcessController():
     def process2List(self, processes):
@@ -39,15 +40,18 @@ class ProcessController():
         
         
     def endProcess(self, process_name):
-        try:
-            #result = subprocess.run(f"taskkill /f /im {process_name}", shell=True, check=True, text=True, capture_output=True)
-            #return result.stdout.strip()
-        #except subprocess.CalledProcessError as e:
-            #return f"Error ending process: {e}"
-            
-            # Search and kill the process with name process_name
-            process = subprocess.Popen(f"taskkill /f /im {process_name}", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, executable="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe")
-            # return result
-            return f"Ended process: {process_name}"
-        except Exception as e:
-            return f"Error ending process: {e}"
+        check = False
+        for process in psutil.process_iter(attrs=['pid', 'name']):
+            try:
+                process_info = process.info
+                if process_info['name'] == process_name:
+                    pid = process_info['pid']
+                    process = psutil.Process(pid)
+                    process.terminate()
+                    check = True
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+        if(check == True):
+            return (f"End Process {process_name} Successfully!")
+        else:
+            return (f"No Process {process_name} Found.")
