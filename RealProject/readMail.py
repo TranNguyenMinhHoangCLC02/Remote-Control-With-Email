@@ -86,7 +86,7 @@ def start_app(sender_email, body):
 def end_app(sender_email, body):
     appName = get_name_app_or_process(body, "EndApp Name =")
     if appName != "":
-        sendMail.send_EndApp(sender_email, appName)
+        sendMail.send_endApp(sender_email, appName)
 
 def process_email(sender_email, body):
     start = 0  # Define the start position in the string
